@@ -69,6 +69,34 @@ html, body {
   box-sizing: border-box;
 }
 
+@keyframes flowChevron {
+  0% {
+    opacity: 0.18;
+    transform: translateY(-4px);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  70% {
+    opacity: 0.42;
+    transform: translateY(4px);
+  }
+  100% {
+    opacity: 0.18;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes flowDash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
 h1,
 h2 {
   font-family: var(--heading);

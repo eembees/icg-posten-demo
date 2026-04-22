@@ -123,7 +123,7 @@ function StatusBadge({ s, label }) {
   return (
     <span style={{
       display: 'inline-block', padding: '2px 8px', borderRadius: 2,
-      fontSize: 10, fontFamily: FB, fontWeight: 700, letterSpacing: '0.04em',
+      fontSize: 11, fontFamily: FB, fontWeight: 700, letterSpacing: '0.04em',
       color: col, background: bg, border: `1px solid ${col}30`,
     }}>{label}</span>
   );
@@ -139,8 +139,39 @@ function CheckRow({ s, text, visible }) {
       transition: 'opacity 0.4s ease, transform 0.4s ease',
       padding: '5px 0', borderBottom: `1px solid ${C.border}`,
     }}>
-      <span style={{ color: col, fontFamily: FB, fontSize: 12, fontWeight: 700, minWidth: 14 }}>{icon}</span>
-      <span style={{ fontFamily: FB, fontSize: 11, color: C.ash, lineHeight: 1.5 }}>{text}</span>
+      <span style={{ color: col, fontFamily: FB, fontSize: 13, fontWeight: 700, minWidth: 14 }}>{icon}</span>
+      <span style={{ fontFamily: FB, fontSize: 12, color: C.ash, lineHeight: 1.5 }}>{text}</span>
+    </div>
+  );
+}
+
+function FlowDivider({ active, color = C.blueGreen, compact = false }) {
+  const size = compact ? 6 : 10;
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: compact ? 0 : 3,
+      padding: compact ? '0 0' : '6px 0',
+      opacity: active ? 1 : 0.28,
+      transition: 'opacity 0.35s ease',
+    }}>
+      {[0, 1].map((step) => (
+        <span
+          key={step}
+          style={{
+            width: 0,
+            height: 0,
+            borderLeft: `${size}px solid transparent`,
+            borderRight: `${size}px solid transparent`,
+            borderTop: `${size + 4}px solid ${color}`,
+            filter: active ? `drop-shadow(0 2px 4px ${color}22)` : 'none',
+            animation: active ? `flowChevron 1.1s ease-in-out ${step * 0.18}s infinite` : 'none',
+          }}
+        />
+      ))}
     </div>
   );
 }
@@ -184,10 +215,10 @@ function SceneDiscover({ phase }) {
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'minmax(340px, 420px) minmax(260px, 1fr)',
-      gap: 24,
+      gap: 18,
       height: '100%',
       alignItems: 'flex-start',
-      paddingTop: 8,
+      paddingTop: 4,
     }}>
       {/* Map column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 0 }}>
@@ -197,13 +228,13 @@ function SceneDiscover({ phase }) {
           outlineFill={MAP_OUTLINE_FILL}
           strokeColor={MAP_STROKE}
           strokeWidth={0.8}
-          mapWidth={360}
-          minHeight="clamp(560px, 76vh, 780px)"
-          frameStyle={{ ...MAP_FRAME, ...fade(phase, 0) }}
+          mapWidth={340}
+          minHeight="clamp(460px, 63vh, 620px)"
+          frameStyle={{ ...MAP_FRAME, padding: '14px 12px 14px', ...fade(phase, 0) }}
           weatherContent={(
             <div style={{ ...fade(phase, 1), textAlign: 'right' }}>
               <div style={{ fontSize: 30, lineHeight: 1 }}>{phase < 2 ? '☀️' : '⛈️'}</div>
-              <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, marginTop: 4, whiteSpace: 'nowrap' }}>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, marginTop: 4, whiteSpace: 'nowrap' }}>
                 {phase < 2 ? 'Normal conditions' : 'Storm · Vestlandet'}
               </div>
             </div>
@@ -222,7 +253,7 @@ function SceneDiscover({ phase }) {
       </div>
 
       {/* Stats + insight */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 12, maxWidth: 560 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8, maxWidth: 560 }}>
         {[
           { label: 'Parcels in-flight', val: '2,418', col: C.black, p: 1 },
           { label: 'At risk (amber)',    val: '847',   col: C.sAmber, p: 2 },
@@ -233,7 +264,7 @@ function SceneDiscover({ phase }) {
             padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             ...fade(phase, s.p, (s.p - 1) * 120),
           }}>
-            <span style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{s.label}</span>
+            <span style={{ fontFamily: FB, fontSize: 12, color: C.ash }}>{s.label}</span>
             <span style={{ fontFamily: FD, fontSize: 22, color: s.col }}>{s.val}</span>
           </div>
         ))}
@@ -246,7 +277,7 @@ function SceneDiscover({ phase }) {
           <div style={{ fontFamily: FD, fontSize: 13, color: C.white, fontStyle: 'italic', lineHeight: 1.55 }}>
             "Dynamic rerouting recovers 73% of at-risk parcels within SLA windows"
           </div>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.greenGrey, marginTop: 6 }}>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.greenGrey, marginTop: 6 }}>
             Source: 18-month disruption analysis · Posten Bring Data Science
           </div>
         </div>
@@ -297,7 +328,7 @@ const DATA_DOMAINS = [
 
 function SceneDataPlatform({ phase }) {
   return (
-    <div style={{ display: 'flex', gap: 14, height: '100%', alignItems: 'flex-start', paddingTop: 4 }}>
+    <div style={{ display: 'flex', gap: 14, height: '100%', alignItems: 'flex-start', paddingTop: 0 }}>
       {DATA_DOMAINS.map((d, i) => (
         <div key={d.name} style={{
           flex: 1, background: C.white, border: `1px solid ${C.border}`, borderRadius: 2,
@@ -307,13 +338,13 @@ function SceneDataPlatform({ phase }) {
           <div style={{ background: d.colorBg, padding: '10px 14px', borderBottom: `1px solid ${C.border}` }}>
             <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: d.color, letterSpacing: '0.05em' }}>{d.type}</div>
             <div style={{ fontFamily: FB, fontSize: 13, fontWeight: 700, color: C.black, marginTop: 2 }}>{d.name}</div>
-            <div style={{ fontFamily: FB, fontSize: 10, color: C.ash, marginTop: 1 }}>{d.full}</div>
+            <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, marginTop: 1 }}>{d.full}</div>
           </div>
 
           {/* Steward + count */}
           <div style={{ padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>DATA STEWARD</div>
-            <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, fontWeight: 700, marginTop: 1 }}>{d.steward}</div>
+            <div style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>DATA STEWARD</div>
+            <div style={{ fontFamily: FB, fontSize: 12, color: C.ash, fontWeight: 700, marginTop: 1 }}>{d.steward}</div>
             <div style={{ fontFamily: FD, fontSize: 16, color: C.blueGreen, marginTop: 6 }}>{d.count}</div>
           </div>
 
@@ -325,10 +356,10 @@ function SceneDataPlatform({ phase }) {
                 padding: '4px 0', borderBottom: ri < d.rows.length - 1 ? `1px solid ${C.border}` : 'none',
               }}>
                 <div>
-                  <div style={{ fontFamily: FB, fontSize: 10, fontWeight: 700, color: C.black }}>{r.id}</div>
-                  <div style={{ fontFamily: FB, fontSize: 9, color: C.grey }}>{r.route}</div>
+                  <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: C.black }}>{r.id}</div>
+                  <div style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>{r.route}</div>
                 </div>
-                <div style={{ fontFamily: FB, fontSize: 9, color: C.ash }}>{r.status}</div>
+                <div style={{ fontFamily: FB, fontSize: 10, color: C.ash }}>{r.status}</div>
               </div>
             ))}
           </div>
@@ -339,7 +370,7 @@ function SceneDataPlatform({ phase }) {
             opacity: phase >= 4 ? 1 : 0,
             transition: 'opacity 0.5s ease 200ms',
           }}>
-            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, marginBottom: 4 }}>{d.qualityLabel}</div>
+            <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, marginBottom: 4 }}>{d.qualityLabel}</div>
             <div style={{
               height: 6, background: C.border, borderRadius: 3, overflow: 'hidden',
             }}>
@@ -350,7 +381,7 @@ function SceneDataPlatform({ phase }) {
             </div>
             <div style={{ marginTop: 8 }}>
               {d.checks.map((c, ci) => (
-                <div key={ci} style={{ fontFamily: FB, fontSize: 9, color: C.ash, padding: '1px 0' }}>{c}</div>
+                <div key={ci} style={{ fontFamily: FB, fontSize: 10, color: C.ash, padding: '1px 0' }}>{c}</div>
               ))}
             </div>
           </div>
@@ -362,100 +393,175 @@ function SceneDataPlatform({ phase }) {
 
 // ─── SCENE 3: INTEGRATION CHECKS ─────────────────────────────────────────────
 const INTEGRATIONS = [
-  { name: 'TMS',            type: 'Internal API',    status: 'green',  note: 'Live · connector active',      x: 32,  y: 44  },
-  { name: 'Route Optimizer',type: 'Internal API',    status: 'amber',  note: 'Minor field mapping required', x: 250, y: 44  },
-  { name: 'YR.NO / MET',   type: 'Public REST API', status: 'green',  note: 'Live · no auth required',      x: 32,  y: 220 },
-  { name: 'Fleet GPS',      type: 'IoT Stream',      status: 'red',    note: 'Latency 8–14s — infeasible',   x: 250, y: 220 },
+  {
+    name: 'TMS',
+    type: 'Internal API',
+    status: 'green',
+    badge: 'READY',
+    note: 'No critical vulnerability. Parcel and route IDs are stable.',
+  },
+  {
+    name: 'Route Optimizer',
+    type: 'Internal API',
+    status: 'amber',
+    badge: 'FIX NEEDED',
+    note: 'Vulnerability: 2 route fields still need mapping before orchestration.',
+  },
+  {
+    name: 'YR.NO / MET',
+    type: 'Public REST API',
+    status: 'green',
+    badge: 'READY',
+    note: 'No critical vulnerability. Add caching for weather outage tolerance.',
+  },
+  {
+    name: 'Fleet GPS',
+    type: 'IoT Stream',
+    status: 'red',
+    badge: 'BLOCKED',
+    note: 'Vulnerability: 8–14s latency is too high for automated rerouting.',
+  },
 ];
 
 function SceneIntegration({ phase }) {
   const statusColor = s => s === 'green' ? C.sGreen : s === 'amber' ? C.sAmber : C.sRed;
   const statusBg    = s => s === 'green' ? C.sGreenBg : s === 'amber' ? C.sAmberBg : C.sRedBg;
-  const boardWidth = 430;
-  const boardHeight = 360;
-  const boxWidth = 148;
-  const boxHeight = 72;
-  const engineWidth = 118;
-  const engineHeight = 82;
+  const boardWidth = 560;
+  const boardHeight = 444;
+  const boxWidth = 118;
+  const boxHeight = 118;
+  const noteHeight = 116;
+  const topY = 26;
+  const noteY = topY + boxHeight + 14;
+  const gap = 18;
+  const xStart = 17;
+  const serviceX = INTEGRATIONS.map((_, i) => xStart + i * (boxWidth + gap));
+  const engineWidth = 198;
+  const engineHeight = 90;
+  const engineLeft = (boardWidth - engineWidth) / 2;
+  const engineTop = 334;
   const engineCenterX = boardWidth / 2;
-  const engineCenterY = 172;
+  const engineTopY = engineTop + 6;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', paddingTop: 16, ...fade(phase, 0) }}>
-      {/* Architecture diagram */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', paddingTop: 8, ...fade(phase, 0) }}>
       <div style={{
         ...SURFACE_CARD,
         position: 'relative',
         width: boardWidth,
         height: boardHeight,
-        background: 'rgba(255, 255, 255, 0.72)',
+        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 249, 0.9) 100%)',
+        overflow: 'hidden',
       }}>
         <svg style={{ position: 'absolute', inset: 0 }} width={boardWidth} height={boardHeight}>
-          {/* Lines from integrations to center engine */}
+          <defs>
+            <marker id="flowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={C.blueGreen} />
+            </marker>
+          </defs>
+
+          <line x1="40" y1="18" x2={boardWidth - 40} y2="18" stroke={C.border} strokeWidth="1" />
+
           {INTEGRATIONS.map((ig, i) => {
-            const ix = ig.x + boxWidth / 2;
-            const iy = ig.y + boxHeight / 2;
-            const col = phase >= 2 ? statusColor(ig.status) : C.grey;
+            const startX = serviceX[i] + boxWidth / 2;
+            const startY = topY + boxHeight + 3;
+            const col = phase >= 2 ? statusColor(ig.status) : C.greenGrey;
+            const path = `M ${startX} ${startY} C ${startX} ${startY + 58}, ${engineCenterX} ${engineTopY - 72}, ${engineCenterX} ${engineTopY}`;
+
             return (
-              <line key={i} x1={ix} y1={iy} x2={engineCenterX} y2={engineCenterY}
-                stroke={col} strokeWidth="2"
-                strokeDasharray={ig.status === 'amber' ? '6,4' : ig.status === 'red' ? '4,4' : 'none'}
-                opacity={phase >= 2 ? 1 : 0}
-                style={{ transition: `opacity 0.5s ease ${i * 100 + 200}ms` }}
+              <path
+                key={ig.name}
+                d={path}
+                fill="none"
+                stroke={col}
+                strokeWidth="2.6"
+                strokeDasharray="8 10"
+                markerEnd="url(#flowArrow)"
+                opacity={phase >= 2 ? 0.95 : 0}
+                style={{
+                  transition: `opacity 0.45s ease ${i * 90 + 120}ms`,
+                  animation: phase >= 2 ? `flowDash 1s linear ${i * 0.08}s infinite` : 'none',
+                }}
               />
             );
           })}
         </svg>
 
-        {/* Center: AI Engine */}
         <div style={{
           position: 'absolute',
-          left: engineCenterX - engineWidth / 2,
-          top: engineCenterY - engineHeight / 2,
+          left: engineLeft,
+          top: engineTop,
           width: engineWidth,
           height: engineHeight,
-          background: C.blueGreen, borderRadius: 2, display: 'flex', flexDirection: 'column',
+          background: C.blueGreen,
+          borderRadius: 2,
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: 2,
           boxShadow: SURFACE_SHADOW,
-          ...fade(phase, 0),
+          ...fade(phase, 2, 120),
         }}>
-          <div style={{ fontFamily: FB, fontSize: 9, color: C.greenGrey, letterSpacing: '0.05em' }}>AI ENGINE</div>
-          <div style={{ fontFamily: FD, fontSize: 13, color: C.white, textAlign: 'center', lineHeight: 1.3 }}>Rerouting<br/>Engine</div>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.greenGrey, letterSpacing: '0.08em' }}>AI ENGINE</div>
+          <div style={{ fontFamily: FD, fontSize: 18, color: C.white, textAlign: 'center', lineHeight: 1.25 }}>
+            Rerouting
+            <br />
+            Engine
+          </div>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.white, opacity: 0.82 }}>
+            Decisioning + guardrails
+          </div>
         </div>
 
-        {/* Integration boxes */}
         {INTEGRATIONS.map((ig, i) => (
-          <div key={ig.name} style={{
-            position: 'absolute', left: ig.x, top: ig.y, width: boxWidth, minHeight: boxHeight,
-            background: phase >= 2 ? statusBg(ig.status) : C.lightGrey,
-            border: `1.5px solid ${phase >= 2 ? statusColor(ig.status) : C.border}`,
-            borderRadius: 2, padding: '10px 12px', boxSizing: 'border-box',
-            boxShadow: SURFACE_SHADOW,
-            transition: `all 0.5s ease ${i * 100}ms`,
-            ...fade(phase, 1, i * 100),
-          }}>
-            <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: C.black, lineHeight: 1.3 }}>{ig.name}</div>
-            <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, marginTop: 4 }}>{ig.type}</div>
-          </div>
-        ))}
+          <div key={ig.name}>
+            <div style={{
+              position: 'absolute',
+              left: serviceX[i],
+              top: topY,
+              width: boxWidth,
+              height: boxHeight,
+              background: phase >= 1 ? C.white : C.lightGrey,
+              border: `1.5px solid ${phase >= 1 ? statusColor(ig.status) : C.border}`,
+              borderTop: `4px solid ${phase >= 1 ? statusColor(ig.status) : C.border}`,
+              borderRadius: 2,
+              padding: '16px 11px 12px',
+              boxSizing: 'border-box',
+              boxShadow: SURFACE_SHADOW,
+              transition: `all 0.45s ease ${i * 90}ms`,
+              ...fade(phase, 1, i * 90),
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 13, fontWeight: 700, color: C.black, lineHeight: 1.2 }}>{ig.name}</div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, marginTop: 5 }}>{ig.type}</div>
+              <div style={{ marginTop: 8 }}>
+                <StatusBadge s={ig.status} label={ig.badge} />
+              </div>
+            </div>
 
-        {/* Risk notes */}
-        {phase >= 3 && INTEGRATIONS.map((ig, i) => (
-          <div key={`note-${i}`} style={{
-            position: 'absolute', left: ig.x, top: ig.y + boxHeight + 10, width: boxWidth,
-            fontFamily: FB, fontSize: 9, color: statusColor(ig.status),
-            lineHeight: 1.4, textAlign: 'center',
-            background: 'rgba(255, 255, 255, 0.88)',
-            border: `1px solid ${statusColor(ig.status)}20`,
-            borderRadius: 2,
-            padding: '4px 6px',
-            boxSizing: 'border-box',
-            opacity: phase >= 3 ? 1 : 0, transition: `opacity 0.4s ease ${i * 80}ms`,
-          }}>{ig.note}</div>
+            <div style={{
+              position: 'absolute',
+              left: serviceX[i],
+              top: noteY,
+              width: boxWidth,
+              height: noteHeight,
+              background: `${statusBg(ig.status)}C8`,
+              border: `1px solid ${phase >= 3 ? statusColor(ig.status) : C.border}`,
+              borderRadius: 2,
+              padding: '9px 10px',
+              boxSizing: 'border-box',
+              opacity: phase >= 3 ? 1 : 0,
+              transition: `opacity 0.4s ease ${i * 80}ms, border-color 0.4s ease`,
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: statusColor(ig.status), letterSpacing: '0.05em' }}>
+                VULNERABILITY
+              </div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, lineHeight: 1.45, marginTop: 5 }}>
+                {ig.note}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Integration summary bar */}
       <div style={{
         display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', ...fade(phase, 4, 200),
       }}>
@@ -479,101 +585,175 @@ function SceneIntegration({ phase }) {
 // ─── SCENE 4: DEMO (Package Rerouting) ───────────────────────────────────────
 const PACKAGES = [
   {
-    id: 'POST-24018', route: 'Oslo → Bergen',
-    value: 'NOK 420', weight: '2.1 kg',
-    risk: 'LOW RISK', riskS: 'green',
-    decision: 'AUTO-APPROVED',
-    decisionColor: C.sGreen, decisionBg: C.sGreenBg,
-    newRoute: 'Oslo → Drammen → Bergen (E39)',
-    reason: 'Standard parcel · value < NOK 500 · alt route confirmed',
+    id: 'POST-24018',
+    priority: 'Prio C',
+    value: 'NOK 420',
+    weight: '2.1 kg',
+    parcelType: 'Standard B2C',
+    riskS: 'green',
+    originalRoute: 'Oslo → Bergen via E16',
+    roadProblem: 'Storm closure on Filefjell shuts the planned mountain crossing.',
+    proposedRoute: 'Oslo → Drammen → Bergen via E134 + E39',
+    reasoning: 'Low value, high certainty of delivery',
+    outcome: 'Auto approve',
     icon: '📦',
   },
   {
-    id: 'POST-24019', route: 'Stavanger → Trondheim',
-    value: 'NOK 3,400', weight: '8.5 kg',
-    risk: 'UNCERTAIN', riskS: 'amber',
-    decision: 'HUMAN IN THE LOOP',
-    decisionColor: C.sAmber, decisionBg: C.sAmberBg,
-    newRoute: 'Stavanger → Bergen → Trondheim (ferry)',
-    reason: 'High-value · ETA variance ±4h · dispatcher review required',
+    id: 'POST-24019',
+    priority: 'Prio B',
+    value: 'NOK 3,400',
+    weight: '8.5 kg',
+    parcelType: 'Business parcel',
+    riskS: 'amber',
+    originalRoute: 'Stavanger → Trondheim val feryn',
+    roadProblem: 'High wind grounds a ferry leg and adds significant ETA variance.',
+    proposedRoute: 'Stavanger → Bergen → Trondheim via road + overnight ferry',
+    reasoning: 'Higher parcel value with medium delivery certainty requires dispatcher review',
+    outcome: 'Human approval',
     icon: '📬',
   },
   {
-    id: 'POST-24020', route: 'Bergen → Ålesund',
-    value: 'NOK 8,900', weight: '22 kg',
-    risk: 'HIGH RISK', riskS: 'red',
-    decision: 'CASE OPENED',
-    decisionColor: C.sRed, decisionBg: C.sRedBg,
-    newRoute: 'No viable automated route',
-    reason: 'Medical device · all alt routes blocked · manual casework',
+    id: 'POST-24020',
+    priority: 'Prio A',
+    value: 'NOK 8,900',
+    weight: '22 kg',
+    parcelType: 'Medical device',
+    riskS: 'red',
+    originalRoute: 'Bergen → Ålesund via E39',
+    roadProblem: 'Landslide closes E39 and the backup ferry lane is fully booked.',
+    proposedRoute: 'Hold at Bergen hub until protected medical lane opens',
+    reasoning: 'High value with low certainty of safe delivery cannot be auto-rerouted',
+    outcome: 'Case opened',
     icon: '🚨',
   },
 ];
 
 function SceneDemo({ phase }) {
+  const statusColor = s => s === 'green' ? C.sGreen : s === 'amber' ? C.sAmber : C.sRed;
+  const statusBg    = s => s === 'green' ? C.sGreenBg : s === 'amber' ? C.sAmberBg : C.sRedBg;
+
   return (
-    <div style={{ display: 'flex', gap: 14, height: '100%', alignItems: 'flex-start', paddingTop: 8 }}>
+    <div style={{ display: 'flex', gap: 14, height: '100%', alignItems: 'stretch', paddingTop: 4 }}>
       {PACKAGES.map((pkg, i) => {
-        const showDecision = phase >= i + 2;
-        const statusColor = s => s === 'green' ? C.sGreen : s === 'amber' ? C.sAmber : C.sRed;
-        const statusBg    = s => s === 'green' ? C.sGreenBg : s === 'amber' ? C.sAmberBg : C.sRedBg;
+        const showProblem = phase >= 2;
+        const showProposal = phase >= 3;
+        const showOutcome = phase >= 4;
+
         return (
           <div key={pkg.id} style={{
-            flex: 1, background: C.white, border: `1px solid ${C.border}`,
-            borderRadius: 2, overflow: 'hidden',
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            background: C.white,
+            border: `1px solid ${C.border}`,
+            borderRadius: 2,
+            overflow: 'hidden',
             borderTop: `3px solid ${statusColor(pkg.riskS)}`,
-            ...fade(phase, i + 1, i * 200),
+            boxShadow: SURFACE_SHADOW,
+            ...fade(phase, 1, i * 120),
           }}>
-            {/* Package header */}
-            <div style={{ padding: '12px 14px', borderBottom: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 22 }}>{pkg.icon}</div>
-              <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: C.black, marginTop: 4 }}>{pkg.id}</div>
-              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{pkg.route}</div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-                <span style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>{pkg.value}</span>
-                <span style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>·</span>
-                <span style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>{pkg.weight}</span>
+            <div style={{ padding: '10px 12px 8px', borderBottom: `1px solid ${C.border}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                <div style={{ fontSize: 22 }}>{pkg.icon}</div>
+                <div style={{ flexShrink: 0 }}>
+                  <StatusBadge s={pkg.riskS} label={pkg.riskS === 'green' ? 'LOW RISK' : pkg.riskS === 'amber' ? 'REVIEW' : 'HIGH RISK'} />
+                </div>
+              </div>
+              <div style={{ fontFamily: FB, fontSize: 13, fontWeight: 700, color: C.black, marginTop: 4 }}>
+                {pkg.id} ({pkg.priority})
+              </div>
+
+              <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>{pkg.value}</span>
+                <span style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>·</span>
+                <span style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>{pkg.weight}</span>
+                <span style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>·</span>
+                <span style={{ fontFamily: FB, fontSize: 11, color: C.grey }}>{pkg.parcelType}</span>
               </div>
             </div>
 
-            {/* Risk badge */}
-            <div style={{ padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
-              <span style={{
-                fontFamily: FB, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-                color: statusColor(pkg.riskS), background: statusBg(pkg.riskS),
-                padding: '3px 8px', borderRadius: 2,
-              }}>{pkg.risk}</span>
-            </div>
-
-            {/* Arrow */}
-            <div style={{
-              padding: '8px 0', textAlign: 'center', fontSize: 18,
-              opacity: showDecision ? 1 : 0.15,
-              transition: 'opacity 0.5s ease',
-            }}>↓</div>
-
-            {/* Decision */}
-            <div style={{
-              padding: '10px 14px',
-              background: showDecision ? statusBg(pkg.riskS) : C.lightGrey,
-              borderTop: `1px solid ${C.border}`,
-              transition: 'background 0.6s ease',
-            }}>
+            <div style={{ padding: '0 12px 4px', display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
               <div style={{
-                fontFamily: FB, fontSize: 11, fontWeight: 700,
-                color: showDecision ? statusColor(pkg.riskS) : C.grey,
-                transition: 'color 0.6s ease',
-              }}>{pkg.decision}</div>
-              {showDecision && (
-                <>
-                  <div style={{ fontFamily: FB, fontSize: 10, color: C.ash, marginTop: 6, lineHeight: 1.5 }}>
-                    <strong>New route:</strong> {pkg.newRoute}
-                  </div>
-                  <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, marginTop: 4, lineHeight: 1.5 }}>
-                    {pkg.reason}
-                  </div>
-                </>
-              )}
+                background: C.bgNear,
+                border: `1px solid ${C.border}`,
+                borderRadius: 2,
+                padding: '8px 9px',
+              }}>
+                <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: C.grey, letterSpacing: '0.06em' }}>
+                  ORIGINAL ROUTE
+                </div>
+                <div style={{ fontFamily: FB, fontSize: 12, color: C.ash, lineHeight: 1.45, marginTop: 5 }}>
+                  {pkg.originalRoute}
+                </div>
+              </div>
+
+              <div style={{
+                background: showProblem ? `${statusBg(pkg.riskS)}D5` : C.bgNear,
+                border: `1px solid ${showProblem ? statusColor(pkg.riskS) : C.border}`,
+                borderRadius: 2,
+                padding: '8px 9px',
+                transition: 'background 0.45s ease, border-color 0.45s ease',
+              }}>
+                <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: showProblem ? statusColor(pkg.riskS) : C.grey, letterSpacing: '0.06em' }}>
+                  PROBLEM ON THE ROAD
+                </div>
+                <div style={{ fontFamily: FB, fontSize: 12, color: C.ash, lineHeight: 1.45, marginTop: 5 }}>
+                  {pkg.roadProblem}
+                </div>
+              </div>
+
+              <FlowDivider active={showProposal} compact />
+
+              <div style={{
+                background: showProposal ? C.white : C.bgNear,
+                border: `1px solid ${showProposal ? C.blueGreen : C.border}`,
+                borderRadius: 2,
+                padding: '8px 9px',
+                transition: 'background 0.45s ease, border-color 0.45s ease',
+              }}>
+                <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: showProposal ? C.blueGreen : C.grey, letterSpacing: '0.06em' }}>
+                  PROPOSED NEW ROUTE
+                </div>
+                <div style={{ fontFamily: FB, fontSize: 12, color: C.ash, lineHeight: 1.45, marginTop: 5 }}>
+                  {pkg.proposedRoute}
+                </div>
+              </div>
+
+              <FlowDivider active={showProposal} compact />
+
+              <div style={{
+                background: showProposal ? '#F7FAF9' : C.bgNear,
+                border: `1px solid ${showProposal ? `${C.blueGreen}55` : C.border}`,
+                borderRadius: 2,
+                padding: '8px 9px',
+                transition: 'background 0.45s ease, border-color 0.45s ease',
+              }}>
+                <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: showProposal ? C.blueGreen : C.grey, letterSpacing: '0.06em' }}>
+                  REASONING
+                </div>
+                <div style={{ fontFamily: FB, fontSize: 12, color: C.ash, lineHeight: 1.45, marginTop: 5 }}>
+                  {pkg.reasoning}
+                </div>
+              </div>
+
+              <FlowDivider active={showOutcome} compact color={statusColor(pkg.riskS)} />
+
+              <div style={{
+                marginTop: 'auto',
+                background: showOutcome ? statusBg(pkg.riskS) : C.lightGrey,
+                border: `1px solid ${showOutcome ? statusColor(pkg.riskS) : C.border}`,
+                borderRadius: 2,
+                padding: '9px 10px',
+                transition: 'background 0.45s ease, border-color 0.45s ease',
+              }}>
+                <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: showOutcome ? statusColor(pkg.riskS) : C.grey, letterSpacing: '0.06em' }}>
+                  OUTCOME
+                </div>
+                <div style={{ fontFamily: FB, fontSize: 13, fontWeight: 700, color: showOutcome ? statusColor(pkg.riskS) : C.ash, marginTop: 6 }}>
+                  {pkg.outcome}
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -606,10 +786,10 @@ function SceneDelivery({ phase }) {
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'minmax(320px, 390px) minmax(260px, 1fr)',
-      gap: 24,
+      gap: 18,
       height: '100%',
       alignItems: 'flex-start',
-      paddingTop: 8,
+      paddingTop: 4,
     }}>
       {/* Real Norway map with region coloring */}
       <NorwayCountryBox
@@ -618,14 +798,14 @@ function SceneDelivery({ phase }) {
         outlineFill={MAP_OUTLINE_FILL}
         strokeColor={MAP_STROKE}
         strokeWidth={0.8}
-        mapWidth={320}
-        minHeight="clamp(460px, 60vh, 620px)"
-        frameStyle={{ ...MAP_FRAME, ...fade(phase, 0) }}
+        mapWidth={300}
+        minHeight="clamp(400px, 52vh, 520px)"
+        frameStyle={{ ...MAP_FRAME, padding: '14px 12px 14px', ...fade(phase, 0) }}
       />
 
       {/* Region KPI list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 8, maxWidth: 560 }}>
-        <div style={{ fontFamily: FB, fontSize: 10, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8, maxWidth: 560 }}>
+        <div style={{ fontFamily: FB, fontSize: 11, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
           REGIONAL KPI DRIVERS
         </div>
         {DELIVERY_REGIONS.map((r, i) => (
@@ -638,7 +818,7 @@ function SceneDelivery({ phase }) {
           }}>
             <div>
               <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: C.black }}>{r.name}</div>
-              <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, marginTop: 2 }}>{r.metric}</div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, marginTop: 2 }}>{r.metric}</div>
             </div>
             <div style={{
               fontFamily: FD, fontSize: 18,
@@ -653,7 +833,7 @@ function SceneDelivery({ phase }) {
           background: C.blueGreen, borderRadius: 2, padding: '12px 14px',
           ...fade(phase, 5, 200),
         }}>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.greenGrey, letterSpacing: '0.05em' }}>HALF DOUBLE METHODOLOGY</div>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.greenGrey, letterSpacing: '0.05em' }}>HALF DOUBLE METHODOLOGY</div>
           <div style={{ fontFamily: FD, fontSize: 13, color: C.white, marginTop: 4, lineHeight: 1.5, fontStyle: 'italic' }}>
             Impact delivered region by region — learning informs each wave
           </div>
@@ -686,7 +866,7 @@ function SceneDeploy({ phase }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 8 }}>
       {/* Learning paths */}
-      <div style={{ fontFamily: FB, fontSize: 10, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
+      <div style={{ fontFamily: FB, fontSize: 11, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
         ROLE-BASED LEARNING PATHS
       </div>
       <div style={{ display: 'flex', gap: 12, ...fade(phase, 1) }}>
@@ -699,7 +879,7 @@ function SceneDeploy({ phase }) {
             <div style={{ margin: '8px 0' }}>
               {r.modules.map((m, mi) => (
                 <div key={mi} style={{
-                  fontFamily: FB, fontSize: 10, color: C.ash, padding: '3px 0',
+                  fontFamily: FB, fontSize: 11, color: C.ash, padding: '3px 0',
                   borderBottom: mi < r.modules.length - 1 ? `1px solid ${C.border}` : 'none',
                 }}>✓ {m}</div>
               ))}
@@ -711,7 +891,7 @@ function SceneDeploy({ phase }) {
                 transition: `width 1.2s ease ${i * 200}ms`,
               }} />
             </div>
-            <div style={{ fontFamily: FB, fontSize: 10, color: r.color, marginTop: 4, fontWeight: 700 }}>
+            <div style={{ fontFamily: FB, fontSize: 11, color: r.color, marginTop: 4, fontWeight: 700 }}>
               {phase >= 2 ? `${r.complete}% complete` : ''}
             </div>
           </div>
@@ -723,7 +903,7 @@ function SceneDeploy({ phase }) {
         <div style={{
           flex: 1, background: C.white, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 14px',
         }}>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em' }}>TRUST CHECKPOINTS</div>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, letterSpacing: '0.05em' }}>TRUST CHECKPOINTS</div>
           {['Week 2: Pilot dispatcher sign-off', 'Week 4: Regional manager review', 'Week 8: Full ops handover'].map((t, ti) => (
             <div key={ti} style={{
               display: 'flex', gap: 8, alignItems: 'center',
@@ -739,11 +919,11 @@ function SceneDeploy({ phase }) {
           background: C.sGreenBg, border: `1px solid ${C.sGreen}40`, borderRadius: 2,
           padding: '12px 14px', minWidth: 160,
         }}>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
           <div style={{ fontFamily: FD, fontSize: 28, color: C.sGreen, marginTop: 6 }}>88%</div>
           <div style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>On-time delivery<br/>during weather events</div>
           <div style={{
-            marginTop: 8, fontFamily: FB, fontSize: 10, fontWeight: 700,
+            marginTop: 8, fontFamily: FB, fontSize: 11, fontWeight: 700,
             color: C.sGreen, background: C.white, padding: '4px 8px', borderRadius: 2, display: 'inline-block',
           }}>TARGET: 88% ✓</div>
         </div>
@@ -760,12 +940,12 @@ function StageExpandedContent({ stageId }) {
       <div style={{ marginTop: 12, minWidth: 0 }}>
       {/* Mini value tree */}
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.05em', marginBottom: 6 }}>WHERE DOES THE VALUE COME FROM?</div>
+        <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 6 }}>WHERE DOES THE VALUE COME FROM?</div>
         <svg viewBox="0 0 280 130" width="100%" style={{ display: 'block' }}>
           {/* Root */}
           <rect x="80" y="2" width="120" height="28" rx="2" fill={C.blueGreen} />
-          <text x="140" y="12" textAnchor="middle" fontFamily={FD} fontSize="9" fill="white">NOK 40M</text>
-          <text x="140" y="24" textAnchor="middle" fontFamily={FB} fontSize="8" fill={C.greenGrey}>annual impact</text>
+          <text x="140" y="12" textAnchor="middle" fontFamily={FD} fontSize="10" fill="white">NOK 40M</text>
+          <text x="140" y="24" textAnchor="middle" fontFamily={FB} fontSize="9" fill={C.greenGrey}>annual impact</text>
           {/* Branches */}
           {[
             { x: 20, label1: 'Fewer', label2: 'delayed parcels', sub1: 'On-time +17pp', sub2: 'Recovery +12%' },
@@ -775,10 +955,10 @@ function StageExpandedContent({ stageId }) {
             <g key={i}>
               <line x1={140} y1={30} x2={b.x + 40} y2={60} stroke={C.greenGrey} strokeWidth="1" />
               <rect x={b.x} y={60} width="80" height="22" rx="2" fill={C.bgNear} stroke={C.border} strokeWidth="1" />
-              <text x={b.x + 40} y={71} textAnchor="middle" fontFamily={FB} fontSize="7.5" fill={C.ash}>{b.label1}</text>
-              <text x={b.x + 40} y={80} textAnchor="middle" fontFamily={FB} fontSize="7.5" fill={C.ash}>{b.label2}</text>
-              <text x={b.x + 10} y={100} fontFamily={FB} fontSize="7" fill={C.blueGreen}>{b.sub1}</text>
-              <text x={b.x + 10} y={112} fontFamily={FB} fontSize="7" fill={C.blueGreen}>{b.sub2}</text>
+              <text x={b.x + 40} y={71} textAnchor="middle" fontFamily={FB} fontSize="8.5" fill={C.ash}>{b.label1}</text>
+              <text x={b.x + 40} y={80} textAnchor="middle" fontFamily={FB} fontSize="8.5" fill={C.ash}>{b.label2}</text>
+              <text x={b.x + 10} y={100} fontFamily={FB} fontSize="8" fill={C.blueGreen}>{b.sub1}</text>
+              <text x={b.x + 10} y={112} fontFamily={FB} fontSize="8" fill={C.blueGreen}>{b.sub2}</text>
             </g>
           ))}
         </svg>
@@ -799,11 +979,11 @@ function StageExpandedContent({ stageId }) {
             minWidth: 0,
             background: C.bgNear, border: `1px solid ${C.border}`, borderRadius: 2, padding: '6px 8px',
           }}>
-            <div style={{ fontFamily: FB, fontSize: 8, color: C.grey, marginBottom: 3 }}>{k.label}</div>
+            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, marginBottom: 3 }}>{k.label}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <span style={{ fontFamily: FD, fontSize: 11, color: C.ash }}>{k.from}</span>
-              <span style={{ color: C.blueGreen, fontSize: 10 }}>→</span>
-              <span style={{ fontFamily: FD, fontSize: 11, color: C.sGreen, fontWeight: 'bold' }}>{k.to}</span>
+              <span style={{ fontFamily: FD, fontSize: 12, color: C.ash }}>{k.from}</span>
+              <span style={{ color: C.blueGreen, fontSize: 11 }}>→</span>
+              <span style={{ fontFamily: FD, fontSize: 12, color: C.sGreen, fontWeight: 'bold' }}>{k.to}</span>
             </div>
           </div>
         ))}
@@ -818,16 +998,16 @@ function StageExpandedContent({ stageId }) {
           background: C.white, border: `1px solid ${C.border}`, borderRadius: 2,
           padding: '6px 10px', flex: 1,
         }}>
-          <div style={{ fontFamily: FB, fontSize: 8, color: C.grey }}>BUSINESS OWNER</div>
-          <div style={{ fontFamily: FB, fontSize: 11, color: C.black, fontWeight: 700, marginTop: 2 }}>Kari Andersen</div>
-          <div style={{ fontFamily: FB, fontSize: 9, color: C.ash }}>VP Operations · Posten Bring</div>
+          <div style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>BUSINESS OWNER</div>
+          <div style={{ fontFamily: FB, fontSize: 12, color: C.black, fontWeight: 700, marginTop: 2 }}>Kari Andersen</div>
+          <div style={{ fontFamily: FB, fontSize: 10, color: C.ash }}>VP Operations · Posten Bring</div>
         </div>
         <div style={{
           background: C.blueGreen, borderRadius: 2, padding: '6px 10px',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
         }}>
-          <div style={{ fontFamily: FB, fontSize: 8, color: C.greenGrey }}>METHODOLOGY</div>
-          <div style={{ fontFamily: FD, fontSize: 11, color: C.white, fontStyle: 'italic' }}>Half Double_</div>
+          <div style={{ fontFamily: FB, fontSize: 10, color: C.greenGrey }}>METHODOLOGY</div>
+          <div style={{ fontFamily: FD, fontSize: 12, color: C.white, fontStyle: 'italic' }}>Half Double_</div>
         </div>
       </div>
     </div>
@@ -835,7 +1015,7 @@ function StageExpandedContent({ stageId }) {
 
   if (stageId === 'design') return (
     <div style={{ marginTop: 10 }}>
-      <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>SOLUTION INCREMENTS</div>
+      <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>SOLUTION INCREMENTS</div>
       {[
         { week: 'Sprint 1', desc: 'Rule-based rerouting for low-risk parcels', done: true },
         { week: 'Sprint 2', desc: 'ML confidence scoring + HITL queue', done: true },
@@ -846,9 +1026,9 @@ function StageExpandedContent({ stageId }) {
           display: 'flex', gap: 8, padding: '6px 0',
           borderBottom: i < 3 ? `1px solid ${C.border}` : 'none', alignItems: 'flex-start',
         }}>
-          <span style={{ fontFamily: FB, fontSize: 9, fontWeight: 700, color: C.blueGreen, minWidth: 50 }}>{s.week}</span>
-          <span style={{ fontFamily: FB, fontSize: 10, color: C.ash, flex: 1 }}>{s.desc}</span>
-          <span style={{ fontSize: 10 }}>{s.done ? '✓' : '○'}</span>
+          <span style={{ fontFamily: FB, fontSize: 10, fontWeight: 700, color: C.blueGreen, minWidth: 50 }}>{s.week}</span>
+          <span style={{ fontFamily: FB, fontSize: 11, color: C.ash, flex: 1 }}>{s.desc}</span>
+          <span style={{ fontSize: 11 }}>{s.done ? '✓' : '○'}</span>
         </div>
       ))}
     </div>
@@ -856,7 +1036,7 @@ function StageExpandedContent({ stageId }) {
 
   if (stageId === 'detail') return (
     <div style={{ marginTop: 10 }}>
-      <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.05em', marginBottom: 6 }}>VULNERABILITY FINDINGS</div>
+      <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 6 }}>VULNERABILITY FINDINGS</div>
       {[
         { s: 'green', text: 'Single-source weather data — YR.NO SLA 99.5%' },
         { s: 'amber', text: 'Route Optimizer schema drift — monitoring added' },
@@ -868,7 +1048,7 @@ function StageExpandedContent({ stageId }) {
             color: c.s === 'green' ? C.sGreen : c.s === 'amber' ? C.sAmber : C.sRed,
             fontWeight: 700, fontSize: 11, minWidth: 14,
           }}>{c.s === 'green' ? '✓' : c.s === 'amber' ? '⚠' : '✗'}</span>
-          <span style={{ fontFamily: FB, fontSize: 10, color: C.ash }}>{c.text}</span>
+          <span style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{c.text}</span>
         </div>
       ))}
     </div>
@@ -892,7 +1072,7 @@ function StageExpandedContent({ stageId }) {
             background: C.sGreenBg, border: `1px solid ${C.sGreen}30`, borderRadius: 2, padding: '8px 6px', textAlign: 'center',
           }}>
             <div style={{ fontFamily: FD, fontSize: 18, color: C.sGreen }}>{m.val}</div>
-            <div style={{ fontFamily: FB, fontSize: 8, color: C.ash, marginTop: 2 }}>{m.label}</div>
+            <div style={{ fontFamily: FB, fontSize: 10, color: C.ash, marginTop: 2 }}>{m.label}</div>
           </div>
         ))}
       </div>
@@ -901,7 +1081,7 @@ function StageExpandedContent({ stageId }) {
         padding: '10px 12px', textAlign: 'center',
       }}>
         <div style={{ fontFamily: FD, fontSize: 16, color: C.sGreen }}>Decision: GO ✓</div>
-        <div style={{ fontFamily: FB, fontSize: 9, color: C.ash, marginTop: 4 }}>
+        <div style={{ fontFamily: FB, fontSize: 10, color: C.ash, marginTop: 4 }}>
           Steering committee · 15 Apr 2025 · Unanimous
         </div>
       </div>
@@ -910,7 +1090,7 @@ function StageExpandedContent({ stageId }) {
 
   if (stageId === 'delivery') return (
     <div style={{ marginTop: 10 }}>
-      <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>HALF DOUBLE — IMPACT PER REGION</div>
+      <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>HALF DOUBLE — IMPACT PER REGION</div>
       {[
         { region: 'Østlandet',  kpi: '87% on-time', s: 'green',  week: 'W1–2' },
         { region: 'Vestlandet', kpi: 'NPS +9pts',   s: 'green',  week: 'W2–3' },
@@ -924,8 +1104,8 @@ function StageExpandedContent({ stageId }) {
             padding: '6px 0', borderBottom: i < 3 ? `1px solid ${C.border}` : 'none',
           }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontFamily: FB, fontSize: 9, color: C.grey, minWidth: 28 }}>{r.week}</span>
-              <span style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{r.region}</span>
+              <span style={{ fontFamily: FB, fontSize: 10, color: C.grey, minWidth: 28 }}>{r.week}</span>
+              <span style={{ fontFamily: FB, fontSize: 12, color: C.ash }}>{r.region}</span>
             </div>
             <span style={{ fontFamily: FD, fontSize: 13, color: col }}>{r.kpi}</span>
           </div>
@@ -947,7 +1127,7 @@ function StageExpandedContent({ stageId }) {
         }}>
           <div>
             <div style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{m.label}</div>
-            <div style={{ fontFamily: FB, fontSize: 9, color: C.grey }}>{m.unit}</div>
+            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>{m.unit}</div>
           </div>
           <div style={{ fontFamily: FD, fontSize: 20, color: C.blueGreen }}>{m.val}</div>
         </div>
@@ -994,7 +1174,7 @@ function PipelinePanel({ currentStage, phase, onStageClick }) {
                 background: isActive ? C.blueGreen : isPast ? gateBgs[s.gateStatus] : C.lightGrey,
                 border: `1.5px solid ${isActive ? C.blueGreen : isPast ? gateColors[s.gateStatus] : C.border}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: FB, fontSize: 10, fontWeight: 700,
+                fontFamily: FB, fontSize: 11, fontWeight: 700,
                 color: isActive ? C.white : isPast ? gateColors[s.gateStatus] : C.grey,
               }}>
                 {isPast ? gateIcons[s.gateStatus] : s.num}
@@ -1002,8 +1182,8 @@ function PipelinePanel({ currentStage, phase, onStageClick }) {
 
               {/* Label */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: FB, fontSize: 9, letterSpacing: '0.07em', color: C.grey }}>{s.label}</div>
-                <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: isLocked ? C.grey : C.black }}>
+                <div style={{ fontFamily: FB, fontSize: 10, letterSpacing: '0.07em', color: C.grey }}>{s.label}</div>
+                <div style={{ fontFamily: FB, fontSize: 13, fontWeight: 700, color: isLocked ? C.grey : C.black }}>
                   {s.title}
                 </div>
               </div>
@@ -1011,7 +1191,7 @@ function PipelinePanel({ currentStage, phase, onStageClick }) {
               {/* Gate badge */}
               {(isActive || isPast) && (
                 <span style={{
-                  fontFamily: FB, fontSize: 9, fontWeight: 700, letterSpacing: '0.04em',
+                  fontFamily: FB, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em',
                   color: gateColors[gs], background: gateBgs[gs],
                   padding: '3px 7px', borderRadius: 2, whiteSpace: 'nowrap', flexShrink: 0,
                 }}>{s.gateLabel}</span>
@@ -1057,7 +1237,7 @@ function ControlBar({ stage, isPlaying, onPlay, onPrev, onNext, onRestart, onSta
   return (
     <div style={{
       background: C.black, borderTop: `1px solid ${C.ash}`,
-      padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0,
+      padding: '8px 18px', display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0,
     }}>
       {/* Buttons */}
       <button onClick={onRestart} style={ctrlBtn(C.grey)} title="Restart">↺</button>
@@ -1080,10 +1260,10 @@ function ControlBar({ stage, isPlaying, onPlay, onPrev, onNext, onRestart, onSta
 
       {/* Stage label */}
       <div style={{ textAlign: 'right', minWidth: 160 }}>
-        <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.08em' }}>
+        <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.08em' }}>
           STAGE {stage + 1} OF 6
         </div>
-        <div style={{ fontFamily: FB, fontSize: 11, fontWeight: 700, color: C.white }}>
+        <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: C.white }}>
           {STAGES[stage].label}: {STAGES[stage].title}
         </div>
       </div>
@@ -1172,7 +1352,7 @@ export default function App() {
     }}>
       {/* Header */}
       <div style={{
-        background: C.black, padding: '10px 28px',
+        background: C.black, padding: '6px 22px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexShrink: 0, borderBottom: `2px solid ${C.blueGreen}`,
       }}>
@@ -1183,7 +1363,7 @@ export default function App() {
           </div>
           <div style={{ width: 1, height: 24, background: C.ash }} />
           <div>
-            <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.1em' }}>
               IMPLEMENT CONSULTING GROUP
             </div>
             <div style={{ fontFamily: FD, fontSize: 15, color: C.white, fontStyle: 'italic' }}>
@@ -1192,7 +1372,7 @@ export default function App() {
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.08em' }}>USE CASE</div>
+          <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.08em' }}>USE CASE</div>
           <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: C.greenGrey }}>
             Dynamic Parcel Rerouting · Posten Bring
           </div>
@@ -1203,17 +1383,17 @@ export default function App() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden', minWidth: 0 }}>
         {/* LEFT PANEL */}
         <div style={{
-          flex: '0 0 57%', padding: '18px 22px 12px 22px',
+          flex: '0 0 57%', padding: '14px 18px 8px 18px',
           display: 'flex', flexDirection: 'column', overflow: 'hidden',
           boxSizing: 'border-box', minWidth: 0,
           borderRight: `1px solid ${C.border}`,
         }}>
           {/* Left panel header */}
-          <div style={{ marginBottom: 14, flexShrink: 0 }}>
+          <div style={{ marginBottom: 8, flexShrink: 0 }}>
             <div style={{
               display: 'inline-block',
               background: C.blueGreen, color: C.white,
-              fontFamily: FB, fontSize: 9, fontWeight: 700, letterSpacing: '0.08em',
+              fontFamily: FB, fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
               padding: '3px 10px', borderRadius: 2, marginBottom: 4,
             }}>{label}</div>
             <div style={{
@@ -1232,9 +1412,9 @@ export default function App() {
           boxSizing: 'border-box', minWidth: 0,
         }}>
           <div style={{
-            padding: '14px 18px 8px 18px', borderBottom: `1px solid ${C.border}`, flexShrink: 0,
+            padding: '12px 16px 6px 16px', borderBottom: `1px solid ${C.border}`, flexShrink: 0,
           }}>
-            <div style={{ fontFamily: FB, fontSize: 9, color: C.grey, letterSpacing: '0.08em' }}>
+            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.08em' }}>
               AI DELIVERY PIPELINE
             </div>
             <div style={{ fontFamily: FD, fontSize: 16, color: C.black, fontStyle: 'italic' }}>
