@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useEffectEvent } from "react";
 import NorwayCountryBox from "./NorwayCountryBox.jsx";
+import { impactCaseContent } from "./impactCaseContent.js";
 
 // ─── DESIGN TOKENS (Implement Consulting Group) ───────────────────────────────
 const C = {
@@ -52,10 +53,7 @@ const STAGES = [
     id: 'discover', num: '01', label: 'DISCOVER', title: 'Impact Case',
     gateStatus: 'green', gateLabel: '✓ GATE PASSED', maxPhase: 4,
     gateChecks: [
-      { s: 'green', text: 'Value hypothesis: NOK 40M annual impact quantified' },
-      { s: 'green', text: 'Business owner: Kari Andersen, VP Operations' },
-      { s: 'green', text: 'KPI baseline: on-time delivery 71% during weather events' },
-      { s: 'green', text: 'Half Double sprint: 8-week impact sprint confirmed' },
+      { s: 'green', text: 'Gate: Impact Case validated' },
     ],
   },
   {
@@ -202,7 +200,6 @@ function SceneDiscover({ phase }) {
     return C.sGreen;
   };
 
-  // County fill by region based on phase
   const regionColors = {};
   if (phase >= 3) {
     regionColors.vestlandet = C.sRed + '55';
@@ -220,7 +217,6 @@ function SceneDiscover({ phase }) {
       alignItems: 'flex-start',
       paddingTop: 4,
     }}>
-      {/* Map column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 0 }}>
         <NorwayCountryBox
           regionColors={regionColors}
@@ -252,7 +248,6 @@ function SceneDiscover({ phase }) {
         />
       </div>
 
-      {/* Stats + insight */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8, maxWidth: 560 }}>
         {[
           { label: 'Parcels in-flight', val: '2,418', col: C.black, p: 1 },
@@ -269,7 +264,6 @@ function SceneDiscover({ phase }) {
           </div>
         ))}
 
-        {/* Value hypothesis */}
         <div style={{
           background: C.blueGreen, borderRadius: 2, padding: '14px 16px',
           ...fade(phase, 4, 200),
@@ -934,84 +928,186 @@ function SceneDeploy({ phase }) {
 
 // ─── RIGHT: PIPELINE PANEL ────────────────────────────────────────────────────
 
-// Expanded content per stage (compact, for the right panel)
-function StageExpandedContent({ stageId }) {
-  if (stageId === 'discover') return (
-      <div style={{ marginTop: 12, minWidth: 0 }}>
-      {/* Mini value tree */}
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 6 }}>WHERE DOES THE VALUE COME FROM?</div>
-        <svg viewBox="0 0 280 130" width="100%" style={{ display: 'block' }}>
-          {/* Root */}
-          <rect x="80" y="2" width="120" height="28" rx="2" fill={C.blueGreen} />
-          <text x="140" y="12" textAnchor="middle" fontFamily={FD} fontSize="10" fill="white">NOK 40M</text>
-          <text x="140" y="24" textAnchor="middle" fontFamily={FB} fontSize="9" fill={C.greenGrey}>annual impact</text>
-          {/* Branches */}
-          {[
-            { x: 20, label1: 'Fewer', label2: 'delayed parcels', sub1: 'On-time +17pp', sub2: 'Recovery +12%' },
-            { x: 105, label1: 'Lower', label2: 'compensation', sub1: 'Claims −34%', sub2: 'SLA cost −NOK 8M' },
-            { x: 190, label1: 'Higher', label2: 'NPS score', sub1: 'NPS +11pts', sub2: 'CSAT +23%' },
-          ].map((b, i) => (
-            <g key={i}>
-              <line x1={140} y1={30} x2={b.x + 40} y2={60} stroke={C.greenGrey} strokeWidth="1" />
-              <rect x={b.x} y={60} width="80" height="22" rx="2" fill={C.bgNear} stroke={C.border} strokeWidth="1" />
-              <text x={b.x + 40} y={71} textAnchor="middle" fontFamily={FB} fontSize="8.5" fill={C.ash}>{b.label1}</text>
-              <text x={b.x + 40} y={80} textAnchor="middle" fontFamily={FB} fontSize="8.5" fill={C.ash}>{b.label2}</text>
-              <text x={b.x + 10} y={100} fontFamily={FB} fontSize="8" fill={C.blueGreen}>{b.sub1}</text>
-              <text x={b.x + 10} y={112} fontFamily={FB} fontSize="8" fill={C.blueGreen}>{b.sub2}</text>
-            </g>
-          ))}
-        </svg>
-      </div>
-      {/* KPI cards */}
+function RightImpactCard({ label, metric, title, body, tone = 'soft', children }) {
+  const tones = {
+    hero: {
+      bg: C.blueGreen,
+      border: `${C.blueGreen}CC`,
+      label: C.greenGrey,
+      metric: C.white,
+      title: C.white,
+      body: 'rgba(255, 255, 255, 0.86)',
+    },
+    business: {
+      bg: '#DCE4E1',
+      border: '#CBD7D3',
+      label: C.blueGreen,
+      metric: C.black,
+      title: C.black,
+      body: C.ash,
+    },
+    soft: {
+      bg: C.bgNear,
+      border: C.border,
+      label: C.grey,
+      metric: C.blueGreen,
+      title: C.black,
+      body: C.ash,
+    },
+  };
+  const palette = tones[tone];
+
+  return (
+    <div style={{
+      background: palette.bg,
+      border: `1px solid ${palette.border}`,
+      borderRadius: 2,
+      padding: tone === 'hero' ? '11px 12px' : '8px 10px',
+    }}>
+      {label && (
+        <div style={{
+          fontFamily: FB,
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: '0.07em',
+          color: palette.label,
+          marginBottom: metric ? 3 : 4,
+        }}>
+          {label}
+        </div>
+      )}
+      {metric && (
+        <div style={{
+          fontFamily: FD,
+          fontSize: tone === 'hero' ? 16 : 14,
+          color: palette.metric,
+          lineHeight: 1.05,
+          marginBottom: 5,
+        }}>
+          {metric}
+        </div>
+      )}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
-        gap: 6,
-        marginBottom: 10,
+        fontFamily: FB,
+        fontSize: tone === 'hero' ? 13 : 12,
+        fontWeight: 700,
+        color: palette.title,
+        lineHeight: 1.3,
       }}>
-        {[
-          { label: 'On-time (weather)', from: '71%', to: '88%' },
-          { label: 'Compensation costs', from: 'NOK 12M', to: 'NOK 8M' },
-          { label: 'NPS score', from: '34', to: '45' },
-        ].map(k => (
-          <div key={k.label} style={{
-            minWidth: 0,
-            background: C.bgNear, border: `1px solid ${C.border}`, borderRadius: 2, padding: '6px 8px',
-          }}>
-            <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, marginBottom: 3 }}>{k.label}</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <span style={{ fontFamily: FD, fontSize: 12, color: C.ash }}>{k.from}</span>
-              <span style={{ color: C.blueGreen, fontSize: 11 }}>→</span>
-              <span style={{ fontFamily: FD, fontSize: 12, color: C.sGreen, fontWeight: 'bold' }}>{k.to}</span>
-            </div>
-          </div>
-        ))}
+        {title}
       </div>
-      {/* Business owner + Half Double */}
+      {body && (
+        <div style={{
+          fontFamily: FB,
+          fontSize: 10,
+          color: palette.body,
+          lineHeight: 1.45,
+          marginTop: 5,
+        }}>
+          {body}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function DiscoverImpactCaseSection() {
+  return (
+    <div style={{ marginTop: 12, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <RightImpactCard
+        label={impactCaseContent.overall.label}
+        title={impactCaseContent.overall.title}
+        body={impactCaseContent.overall.body}
+        tone="hero"
+      >
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(108px, 1fr))',
+          gap: 6,
+          marginTop: 8,
+        }}>
+          {impactCaseContent.overall.metrics.map((item) => (
+            <div key={item.label} style={{
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              borderRadius: 2,
+              padding: '6px 8px',
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 9, color: C.greenGrey }}>{item.label}</div>
+              <div style={{ fontFamily: FD, fontSize: 13, color: C.white, marginTop: 2 }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </RightImpactCard>
+
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
         gap: 6,
       }}>
-        <div style={{
-          background: C.white, border: `1px solid ${C.border}`, borderRadius: 2,
-          padding: '6px 10px', flex: 1,
-        }}>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.grey }}>BUSINESS OWNER</div>
-          <div style={{ fontFamily: FB, fontSize: 12, color: C.black, fontWeight: 700, marginTop: 2 }}>Kari Andersen</div>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.ash }}>VP Operations · Posten Bring</div>
+        {impactCaseContent.business.map((card) => (
+          <RightImpactCard
+            key={card.title}
+            label="BUSINESS IMPACT"
+            metric={card.metric}
+            title={card.title}
+            body={card.body}
+            tone="business"
+          />
+        ))}
+      </div>
+
+      <RightImpactCard
+        label={impactCaseContent.behavioural.label}
+        title={impactCaseContent.behavioural.title}
+        body={impactCaseContent.behavioural.body}
+        tone="soft"
+      >
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+          {impactCaseContent.behavioural.tags.map((tag) => (
+            <span key={tag} style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '4px 7px',
+              borderRadius: 2,
+              border: `1px solid ${C.border}`,
+              background: C.white,
+              fontFamily: FB,
+              fontSize: 9,
+              fontWeight: 700,
+              color: C.blueGreen,
+              letterSpacing: '0.04em',
+            }}>
+              {tag}
+            </span>
+          ))}
         </div>
-        <div style={{
-          background: C.blueGreen, borderRadius: 2, padding: '6px 10px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        }}>
-          <div style={{ fontFamily: FB, fontSize: 10, color: C.greenGrey }}>METHODOLOGY</div>
-          <div style={{ fontFamily: FD, fontSize: 12, color: C.white, fontStyle: 'italic' }}>Half Double_</div>
-        </div>
+      </RightImpactCard>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+        gap: 6,
+      }}>
+        {impactCaseContent.people.map((card) => (
+          <RightImpactCard
+            key={card.title}
+            label="ORGANISATIONAL IMPACT"
+            metric={card.metric}
+            title={card.title}
+            body={card.body}
+            tone="business"
+          />
+        ))}
       </div>
     </div>
   );
+}
+
+// Expanded content per stage (compact, for the right panel)
+function StageExpandedContent({ stageId }) {
+  if (stageId === 'discover') return <DiscoverImpactCaseSection />;
 
   if (stageId === 'design') return (
     <div style={{ marginTop: 10 }}>
