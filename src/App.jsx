@@ -73,7 +73,7 @@ const STAGES = [
       { s: 'green', text: 'TMS connector: schema validated, integration live' },
       { s: 'green', text: 'YR.NO weather API: public access confirmed' },
       { s: 'amber', text: 'Route Optimizer: minor field mapping required (2 days)' },
-      { s: 'red',   text: 'Fleet GPS: latency 8–14s — infeasible, escalate to human' },
+      { s: 'red',   text: 'Fleet GPS: 3rd party integration infeasible, escalate to leadership.' },
     ],
   },
   {
@@ -102,7 +102,7 @@ const STAGES = [
     gateChecks: [
       { s: 'green',  text: 'Norgespakke live · low risk · 92% straight-through rerouting' },
       { s: 'amber',  text: 'Bedriftspakke active · medium risk · 68% approved within 2 minutes' },
-      { s: 'locked', text: 'Termo / Gods controlled · high risk · 100% human sign-off required' },
+      { s: 'locked', text: 'Spesialtransport controlled · high risk · 100% human sign-off required' },
       { s: 'green',  text: '90-day KPI review · on-time delivery 88% ✓ TARGET HIT' },
     ],
   },
@@ -389,7 +389,7 @@ const INTEGRATIONS = [
     type: 'Internal API',
     status: 'green',
     badge: 'READY',
-    note: 'No critical vulnerability. Parcel and route IDs are stable.',
+    note: 'No vulnerability. Parcel and route IDs can be extracted without PII.',
   },
   {
     name: 'Route Optimizer',
@@ -410,7 +410,7 @@ const INTEGRATIONS = [
     type: 'IoT Stream',
     status: 'red',
     badge: 'BLOCKED',
-    note: 'Vulnerability: 8–14s latency is too high for automated rerouting.',
+    note: 'Vulnerability: 3rd party platform does not expose data.',
   },
 ];
 
@@ -608,11 +608,11 @@ const PACKAGES = [
     priority: 'Prio A',
     value: 'NOK 8,900',
     weight: '22 kg',
-    parcelType: 'Termo (Medical Device)',
+    parcelType: 'Spesialtransport',
     riskS: 'red',
     originalRoute: 'Bergen → Ålesund via E39',
     roadProblem: 'Landslide closes E39 and the backup ferry lane is fully booked.',
-    proposedRoute: 'Hold at Bergen hub until protected medical lane opens',
+    proposedRoute: 'Hold at Bergen hub until protected special transport slot opens',
     reasoning: 'High value with low certainty of safe delivery cannot be auto-rerouted',
     outcome: 'Case opened',
     icon: '🚨',
@@ -779,14 +779,14 @@ const ROLLOUT_TIERS = [
   },
   {
     wave: 'Wave 3',
-    title: 'Termo / Gods',
+    title: 'Spesialtransport',
     riskLabel: 'HIGH RISK',
     rolloutLabel: 'CONTROLLED',
     status: 'locked',
     metric: '100%',
     metricLabel: 'Human sign-off required',
     operatingModel: 'No autonomous rerouting; escalation desk owns every case.',
-    guardrail: 'Manual release only · protected lane and compliance checks',
+    guardrail: 'Manual release only · protected slot and compliance checks',
   },
 ];
 
