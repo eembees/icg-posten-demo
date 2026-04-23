@@ -405,7 +405,7 @@ const INTEGRATIONS = [
     type: 'Internal API',
     status: 'amber',
     badge: 'FIX NEEDED',
-    note: 'Vulnerability: 2 route fields still need mapping before orchestration.',
+    note: 'Vulnerability: 2 route fields need mapping before orchestration.',
   },
   {
     name: 'YR.NO / MET',
@@ -589,7 +589,7 @@ const PACKAGES = [
     priority: 'Prio C',
     value: 'NOK 420',
     weight: '2.1 kg',
-    parcelType: 'Standard B2C',
+    parcelType: 'Norgespakke (B2C)',
     riskS: 'green',
     originalRoute: 'Oslo → Bergen via E16',
     roadProblem: 'Storm closure on Filefjell shuts the planned mountain crossing.',
@@ -603,9 +603,9 @@ const PACKAGES = [
     priority: 'Prio B',
     value: 'NOK 3,400',
     weight: '8.5 kg',
-    parcelType: 'Business parcel',
+    parcelType: 'Pakke Hjem Pluss',
     riskS: 'amber',
-    originalRoute: 'Stavanger → Trondheim val feryn',
+    originalRoute: 'Stavanger → Trondheim ial feryn',
     roadProblem: 'High wind grounds a ferry leg and adds significant ETA variance.',
     proposedRoute: 'Stavanger → Bergen → Trondheim via road + overnight ferry',
     reasoning: 'Higher parcel value with medium delivery certainty requires dispatcher review',
@@ -617,7 +617,7 @@ const PACKAGES = [
     priority: 'Prio A',
     value: 'NOK 8,900',
     weight: '22 kg',
-    parcelType: 'Medical device',
+    parcelType: 'Termo (Medical Device)',
     riskS: 'red',
     originalRoute: 'Bergen → Ålesund via E39',
     roadProblem: 'Landslide closes E39 and the backup ferry lane is fully booked.',
@@ -1225,9 +1225,13 @@ function PipelinePanel({ currentStage, phase, onStageClick }) {
 function LeftScene({ stage, phase }) {
   const scenes = [SceneDiscover, SceneDataPlatform, SceneIntegration, SceneDemo, SceneDelivery, SceneDeploy];
   const Scene = scenes[stage];
+  const stageZoom = stage === 3 ? 0.988 : stage === 0 || stage === 4 ? 0.994 : 1;
+
   return (
-    <div style={{ height: '100%', overflowY: 'auto', padding: '0 4px' }}>
-      <Scene phase={phase} />
+    <div style={{ height: '100%', overflow: 'hidden', padding: '0 4px' }}>
+      <div style={{ zoom: stageZoom }}>
+        <Scene phase={phase} />
+      </div>
     </div>
   );
 }
