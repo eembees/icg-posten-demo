@@ -87,23 +87,23 @@ const STAGES = [
     ],
   },
   {
-    id: 'delivery', num: '05', label: 'DELIVERY', title: 'Phased Regional Rollout',
-    gateStatus: 'amber', gateLabel: '⚠ ROLLOUT ACTIVE', maxPhase: 5,
-    gateChecks: [
-      { s: 'green',  text: 'Østlandet pilot: live · on-time delivery 87% (+16pp)' },
-      { s: 'green',  text: 'Vestlandet: deployed · customer NPS +9 points' },
-      { s: 'amber',  text: 'Trøndelag: week 3 of 4 · dispatcher training 60%' },
-      { s: 'locked', text: 'Nord-Norge: deployment planned week 6' },
-    ],
-  },
-  {
-    id: 'deploy', num: '06', label: 'DEPLOYMENT', title: 'Adoption & Realisation',
+    id: 'deploy', num: '05', label: 'DEPLOYMENT', title: 'Adoption & Realisation',
     gateStatus: 'green', gateLabel: '✓ FULLY DEPLOYED', maxPhase: 3,
     gateChecks: [
       { s: 'green', text: '200 dispatchers trained · certification rate 94%' },
       { s: 'green', text: 'CoE established · 4 AI stewards appointed' },
       { s: 'green', text: 'HITL protocols embedded in daily operations' },
       { s: 'green', text: '90-day KPI review: on-time delivery 88% ✓ TARGET HIT' },
+    ],
+  },
+  {
+    id: 'delivery', num: '06', label: 'DELIVERY', title: 'Phased Regional Rollout',
+    gateStatus: 'amber', gateLabel: '⚠ ROLLOUT ACTIVE', maxPhase: 5,
+    gateChecks: [
+      { s: 'green',  text: 'Østlandet pilot: live · on-time delivery 87% (+16pp)' },
+      { s: 'green',  text: 'Vestlandet: deployed · customer NPS +9 points' },
+      { s: 'amber',  text: 'Trøndelag: week 3 of 4 · dispatcher training 60%' },
+      { s: 'locked', text: 'Nord-Norge: deployment planned week 6' },
     ],
   },
 ];
@@ -822,6 +822,32 @@ function SceneDelivery({ phase }) {
           </div>
         ))}
 
+        <div style={{
+          background: C.sGreenBg,
+          border: `1px solid ${C.sGreen}40`,
+          borderRadius: 2,
+          padding: '12px 14px',
+          ...fade(phase, 5, 160),
+        }}>
+          <div style={{ fontFamily: FB, fontSize: 11, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 10, marginTop: 6 }}>
+            <div>
+              <div style={{ fontFamily: FD, fontSize: 28, color: C.sGreen, lineHeight: 1 }}>88%</div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, marginTop: 4 }}>On-time delivery during weather events</div>
+            </div>
+            <div style={{
+              fontFamily: FB,
+              fontSize: 11,
+              fontWeight: 700,
+              color: C.sGreen,
+              background: C.white,
+              padding: '4px 8px',
+              borderRadius: 2,
+              whiteSpace: 'nowrap',
+            }}>TARGET: 88% ✓</div>
+          </div>
+        </div>
+
         {/* Half Double callout */}
         <div style={{
           background: C.blueGreen, borderRadius: 2, padding: '12px 14px',
@@ -892,10 +918,10 @@ function SceneDeploy({ phase }) {
         ))}
       </div>
 
-      {/* Trust checkpoints + 90-day review */}
-      <div style={{ display: 'flex', gap: 12, ...fade(phase, 2, 200) }}>
+      {/* Trust checkpoints */}
+      <div style={{ ...fade(phase, 2, 200) }}>
         <div style={{
-          flex: 1, background: C.white, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 14px',
+          background: C.white, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 14px',
         }}>
           <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, letterSpacing: '0.05em' }}>TRUST CHECKPOINTS</div>
           {['Week 2: Pilot dispatcher sign-off', 'Week 4: Regional manager review', 'Week 8: Full ops handover'].map((t, ti) => (
@@ -907,19 +933,6 @@ function SceneDeploy({ phase }) {
               <span style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>{t}</span>
             </div>
           ))}
-        </div>
-
-        <div style={{
-          background: C.sGreenBg, border: `1px solid ${C.sGreen}40`, borderRadius: 2,
-          padding: '12px 14px', minWidth: 160,
-        }}>
-          <div style={{ fontFamily: FB, fontSize: 11, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
-          <div style={{ fontFamily: FD, fontSize: 28, color: C.sGreen, marginTop: 6 }}>88%</div>
-          <div style={{ fontFamily: FB, fontSize: 11, color: C.ash }}>On-time delivery<br/>during weather events</div>
-          <div style={{
-            marginTop: 8, fontFamily: FB, fontSize: 11, fontWeight: 700,
-            color: C.sGreen, background: C.white, padding: '4px 8px', borderRadius: 2, display: 'inline-block',
-          }}>TARGET: 88% ✓</div>
         </div>
       </div>
     </div>
@@ -1319,7 +1332,7 @@ function PipelinePanel({ currentStage, phase, onStageClick }) {
 
 // ─── LEFT PANEL SCENE SWITCHER ────────────────────────────────────────────────
 function LeftScene({ stage, phase }) {
-  const scenes = [SceneDiscover, SceneDataPlatform, SceneIntegration, SceneDemo, SceneDelivery, SceneDeploy];
+  const scenes = [SceneDiscover, SceneDataPlatform, SceneIntegration, SceneDemo, SceneDeploy, SceneDelivery];
   const Scene = scenes[stage];
   const stageZoom = stage === 3 ? 0.988 : stage === 0 || stage === 4 ? 0.994 : 1;
 
@@ -1387,8 +1400,8 @@ const LEFT_TITLES = [
   { label: 'DATA PLATFORM', title: 'Data domains & stewardship' },
   { label: 'INTEGRATION CHECKS', title: 'Architecture readiness assessment' },
   { label: 'DEMO', title: 'AI rerouting engine in action' },
-  { label: 'DELIVERY', title: 'Regional rollout — Half Double' },
   { label: 'DEPLOYMENT', title: 'Adoption & organisational change' },
+  { label: 'DELIVERY', title: 'Regional rollout — Half Double' },
 ];
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
