@@ -605,7 +605,7 @@ const PACKAGES = [
     weight: '8.5 kg',
     parcelType: 'Pakke Hjem Pluss',
     riskS: 'amber',
-    originalRoute: 'Stavanger → Trondheimvia ferryn',
+    originalRoute: 'Stavanger → Trondheim via ferry',
     roadProblem: 'High wind grounds a ferry leg and adds significant ETA variance.',
     proposedRoute: 'Stavanger → Bergen → Trondheim via road + overnight ferry',
     reasoning: 'Higher parcel value with medium delivery certainty requires dispatcher review',
