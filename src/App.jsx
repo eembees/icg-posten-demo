@@ -97,13 +97,13 @@ const STAGES = [
     ],
   },
   {
-    id: 'delivery', num: '06', label: 'DELIVERY', title: 'Phased Regional Rollout',
+    id: 'delivery', num: '06', label: 'DELIVERY', title: 'Three-Tier Rollout',
     gateStatus: 'amber', gateLabel: '⚠ ROLLOUT ACTIVE', maxPhase: 5,
     gateChecks: [
-      { s: 'green',  text: 'Østlandet pilot: live · on-time delivery 87% (+16pp)' },
-      { s: 'green',  text: 'Vestlandet: deployed · customer NPS +9 points' },
-      { s: 'amber',  text: 'Trøndelag: week 3 of 4 · dispatcher training 60%' },
-      { s: 'locked', text: 'Nord-Norge: deployment planned week 6' },
+      { s: 'green',  text: 'Norgespakke live · low risk · 92% straight-through rerouting' },
+      { s: 'amber',  text: 'Bedriftspakke active · medium risk · 68% approved within 2 minutes' },
+      { s: 'locked', text: 'Termo / Gods controlled · high risk · 100% human sign-off required' },
+      { s: 'green',  text: '90-day KPI review · on-time delivery 88% ✓ TARGET HIT' },
     ],
   },
 ];
@@ -757,77 +757,146 @@ function SceneDemo({ phase }) {
 }
 
 // ─── SCENE 5: DELIVERY (Regional Rollout) ─────────────────────────────────────
-const DELIVERY_REGIONS = [
-  { name: 'Østlandet',  regionKey: 'ostlandet',  status: 'green',  kpi: '87% (+16pp)', metric: 'On-time delivery'       },
-  { name: 'Vestlandet', regionKey: 'vestlandet', status: 'green',  kpi: 'NPS +9',      metric: 'Customer NPS'            },
-  { name: 'Trøndelag',  regionKey: 'trondelag',  status: 'amber',  kpi: '60% trained', metric: 'Dispatcher training'     },
-  { name: 'Nord-Norge', regionKey: 'nord_norge', status: 'locked', kpi: 'Planned W6',  metric: 'Week 6 target'           },
+const ROLLOUT_TIERS = [
+  {
+    wave: 'Wave 1',
+    title: 'Norgespakke',
+    riskLabel: 'LOW RISK',
+    rolloutLabel: 'LIVE',
+    status: 'green',
+    metric: '92%',
+    metricLabel: 'Straight-through rerouting',
+    operatingModel: 'Auto-approve when confidence is high and ETA recovery is stable.',
+    guardrail: 'Confidence > 0.85 · no sensitive parcel classes',
+  },
+  {
+    wave: 'Wave 2',
+    title: 'Bedriftspakke',
+    riskLabel: 'MEDIUM RISK',
+    rolloutLabel: 'ACTIVE',
+    status: 'amber',
+    metric: '68%',
+    metricLabel: 'Dispatcher approval within 2 min',
+    operatingModel: 'AI proposes a route, dispatcher approves before release.',
+    guardrail: 'Human review for value, SLA, or uncertainty thresholds',
+  },
+  {
+    wave: 'Wave 3',
+    title: 'Termo / Gods',
+    riskLabel: 'HIGH RISK',
+    rolloutLabel: 'CONTROLLED',
+    status: 'locked',
+    metric: '100%',
+    metricLabel: 'Human sign-off required',
+    operatingModel: 'No autonomous rerouting; escalation desk owns every case.',
+    guardrail: 'Manual release only · protected lane and compliance checks',
+  },
 ];
 
 function SceneDelivery({ phase }) {
   const statusColor = s => s === 'green' ? C.sGreen : s === 'amber' ? C.sAmber : s === 'locked' ? C.grey : C.sRed;
-  const statusFill  = s => s === 'green' ? '#A7F3C0' : s === 'amber' ? '#FDE68A' : s === 'locked' ? '#D1D5DB' : C.sRedBg;
-
-  // Build region colors from phase
-  const regionColors = {};
-  DELIVERY_REGIONS.forEach((r, i) => {
-    if (phase >= i + 1) {
-      regionColors[r.regionKey] = statusFill(r.status);
-    }
-  });
+  const statusBg = s => s === 'green' ? C.sGreenBg : s === 'amber' ? C.sAmberBg : s === 'locked' ? C.lightGrey : C.sRedBg;
 
   return (
     <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'minmax(320px, 390px) minmax(260px, 1fr)',
-      gap: 18,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12,
       height: '100%',
-      alignItems: 'flex-start',
       paddingTop: 4,
     }}>
-      {/* Real Norway map with region coloring */}
-      <NorwayCountryBox
-        regionColors={regionColors}
-        defaultCountyFill={MAP_NEUTRAL_FILL}
-        outlineFill={MAP_OUTLINE_FILL}
-        strokeColor={MAP_STROKE}
-        strokeWidth={0.8}
-        mapWidth={300}
-        minHeight="clamp(400px, 52vh, 520px)"
-        frameStyle={{ ...MAP_FRAME, padding: '14px 12px 14px', ...fade(phase, 0) }}
-      />
+      <div style={{ fontFamily: FB, fontSize: 11, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
+        RISK-BASED ROLLOUT TIERS
+      </div>
 
-      {/* Region KPI list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8, maxWidth: 560 }}>
-        <div style={{ fontFamily: FB, fontSize: 11, letterSpacing: '0.06em', color: C.grey, ...fade(phase, 0) }}>
-          REGIONAL KPI DRIVERS
-        </div>
-        {DELIVERY_REGIONS.map((r, i) => (
-          <div key={r.name} style={{
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+        gap: 12,
+      }}>
+        {ROLLOUT_TIERS.map((tier, i) => (
+          <div key={tier.title} style={{
             ...SURFACE_CARD,
-            padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            borderLeft: `3px solid ${phase >= i + 1 ? statusColor(r.status) : C.border}`,
-            transition: `border-left-color 0.8s ease ${i * 200}ms`,
-            ...fade(phase, 0, i * 100),
+            borderTop: `3px solid ${phase >= i + 1 ? statusColor(tier.status) : C.border}`,
+            transition: `border-top-color 0.8s ease ${i * 180}ms`,
+            padding: '12px 14px',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            ...fade(phase, i + 1, i * 120),
           }}>
-            <div>
-              <div style={{ fontFamily: FB, fontSize: 12, fontWeight: 700, color: C.black }}>{r.name}</div>
-              <div style={{ fontFamily: FB, fontSize: 11, color: C.grey, marginTop: 2 }}>{r.metric}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' }}>
+              <div>
+                <div style={{ fontFamily: FB, fontSize: 10, letterSpacing: '0.07em', color: C.grey }}>{tier.wave}</div>
+                <div style={{ fontFamily: FD, fontSize: 18, color: C.black, marginTop: 2 }}>{tier.title}</div>
+              </div>
+              <StatusBadge s={tier.status} label={tier.riskLabel} />
             </div>
+
             <div style={{
-              fontFamily: FD, fontSize: 18,
-              color: phase >= i + 1 ? statusColor(r.status) : C.grey,
-              transition: `color 0.8s ease ${i * 200}ms`,
-            }}>{phase >= i + 1 ? r.kpi : '—'}</div>
+              background: C.bgNear,
+              border: `1px solid ${C.border}`,
+              borderRadius: 2,
+              padding: '8px 9px',
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em' }}>KPI</div>
+              <div style={{ fontFamily: FD, fontSize: 24, color: statusColor(tier.status), marginTop: 4 }}>{tier.metric}</div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, marginTop: 3, lineHeight: 1.4 }}>
+                {tier.metricLabel}
+              </div>
+            </div>
+
+            <div>
+              <div style={{ fontFamily: FB, fontSize: 10, fontWeight: 700, color: C.grey, letterSpacing: '0.05em' }}>
+                OPERATING MODEL
+              </div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, lineHeight: 1.5, marginTop: 4 }}>
+                {tier.operatingModel}
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: 'auto',
+              background: C.white,
+              border: `1px solid ${C.border}`,
+              borderRadius: 2,
+              padding: '8px 9px',
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 10, fontWeight: 700, color: C.grey, letterSpacing: '0.05em' }}>
+                GUARDRAIL
+              </div>
+              <div style={{ fontFamily: FB, fontSize: 11, color: C.ash, lineHeight: 1.45, marginTop: 4 }}>
+                {tier.guardrail}
+              </div>
+            </div>
+
+            <FlowDivider active={phase >= i + 1} compact color={statusColor(tier.status)} />
+
+            <div style={{
+              background: `${statusBg(tier.status)}CC`,
+              border: `1px solid ${phase >= i + 1 ? `${statusColor(tier.status)}40` : C.border}`,
+              borderRadius: 2,
+              padding: '8px 9px',
+            }}>
+              <div style={{ fontFamily: FB, fontSize: 10, fontWeight: 700, color: statusColor(tier.status), letterSpacing: '0.05em' }}>
+                ROLLOUT STATUS
+              </div>
+              <div style={{ fontFamily: FD, fontSize: 16, color: statusColor(tier.status), marginTop: 4 }}>
+                {tier.rolloutLabel}
+              </div>
+            </div>
           </div>
         ))}
+      </div>
 
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 760 }}>
         <div style={{
           background: C.sGreenBg,
           border: `1px solid ${C.sGreen}40`,
           borderRadius: 2,
           padding: '12px 14px',
-          ...fade(phase, 5, 160),
+          ...fade(phase, 4, 160),
         }}>
           <div style={{ fontFamily: FB, fontSize: 11, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 10, marginTop: 6 }}>
@@ -848,14 +917,13 @@ function SceneDelivery({ phase }) {
           </div>
         </div>
 
-        {/* Half Double callout */}
         <div style={{
           background: C.blueGreen, borderRadius: 2, padding: '12px 14px',
           ...fade(phase, 5, 200),
         }}>
           <div style={{ fontFamily: FB, fontSize: 11, color: C.greenGrey, letterSpacing: '0.05em' }}>HALF DOUBLE METHODOLOGY</div>
           <div style={{ fontFamily: FD, fontSize: 13, color: C.white, marginTop: 4, lineHeight: 1.5, fontStyle: 'italic' }}>
-            Impact delivered region by region — learning informs each wave
+            Rollout starts with high-volume, low-risk parcel types and expands only when each control tier proves stable
           </div>
         </div>
       </div>
@@ -1199,27 +1267,35 @@ function StageExpandedContent({ stageId }) {
 
   if (stageId === 'delivery') return (
     <div style={{ marginTop: 10 }}>
-      <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>HALF DOUBLE — IMPACT PER REGION</div>
-      {[
-        { region: 'Østlandet',  kpi: '87% on-time', s: 'green',  week: 'W1–2' },
-        { region: 'Vestlandet', kpi: 'NPS +9pts',   s: 'green',  week: 'W2–3' },
-        { region: 'Trøndelag',  kpi: '60% trained', s: 'amber',  week: 'W3–4' },
-        { region: 'Nord-Norge', kpi: 'Planned',     s: 'locked', week: 'W5–6' },
-      ].map((r, i) => {
-        const col = r.s === 'green' ? C.sGreen : r.s === 'amber' ? C.sAmber : C.grey;
+      <div style={{ fontFamily: FB, fontSize: 10, color: C.grey, letterSpacing: '0.05em', marginBottom: 8 }}>ROLLOUT TIERS</div>
+      {ROLLOUT_TIERS.map((tier, i) => {
+        const col = tier.status === 'green' ? C.sGreen : tier.status === 'amber' ? C.sAmber : C.grey;
         return (
           <div key={i} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '6px 0', borderBottom: i < 3 ? `1px solid ${C.border}` : 'none',
+            padding: '6px 0', borderBottom: i < ROLLOUT_TIERS.length - 1 ? `1px solid ${C.border}` : 'none',
           }}>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontFamily: FB, fontSize: 10, color: C.grey, minWidth: 28 }}>{r.week}</span>
-              <span style={{ fontFamily: FB, fontSize: 12, color: C.ash }}>{r.region}</span>
+              <span style={{ fontFamily: FB, fontSize: 10, color: C.grey, minWidth: 42 }}>{tier.wave}</span>
+              <span style={{ fontFamily: FB, fontSize: 12, color: C.ash }}>{tier.title}</span>
             </div>
-            <span style={{ fontFamily: FD, fontSize: 13, color: col }}>{r.kpi}</span>
+            <span style={{ fontFamily: FD, fontSize: 13, color: col }}>{tier.metric}</span>
           </div>
         );
       })}
+      <div style={{
+        marginTop: 10,
+        background: C.sGreenBg,
+        border: `1px solid ${C.sGreen}40`,
+        borderRadius: 2,
+        padding: '10px 12px',
+      }}>
+        <div style={{ fontFamily: FB, fontSize: 10, color: C.sGreen, letterSpacing: '0.05em' }}>90-DAY KPI REVIEW</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 4, gap: 8 }}>
+          <div style={{ fontFamily: FB, fontSize: 10, color: C.ash }}>On-time delivery during weather events</div>
+          <div style={{ fontFamily: FD, fontSize: 18, color: C.sGreen }}>88%</div>
+        </div>
+      </div>
     </div>
   );
 
@@ -1401,7 +1477,7 @@ const LEFT_TITLES = [
   { label: 'INTEGRATION CHECKS', title: 'Architecture readiness assessment' },
   { label: 'DEMO', title: 'AI rerouting engine in action' },
   { label: 'DEPLOYMENT', title: 'Adoption & organisational change' },
-  { label: 'DELIVERY', title: 'Regional rollout — Half Double' },
+  { label: 'DELIVERY', title: 'Three-tier rollout' },
 ];
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
