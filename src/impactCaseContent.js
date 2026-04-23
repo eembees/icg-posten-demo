@@ -5,7 +5,7 @@ export const impactCaseContent = {
     body: 'The initiative protects parcel SLAs during disruption events, unlocks measurable economic value, and supports Posten Bring priorities on service reliability and scalable AI adoption.',
     metrics: [
       { label: 'Annual impact', value: 'NOK 40M' },
-      { label: 'At-risk parcels recovered', value: '73%' },
+      { label: 'At-risk parcels recovered', value: '53%' },
       { label: 'Primary business priority', value: 'Weather resilience' },
     ],
   },

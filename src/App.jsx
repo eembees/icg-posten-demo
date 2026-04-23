@@ -57,7 +57,7 @@ const STAGES = [
     ],
   },
   {
-    id: 'design', num: '02', label: 'DESIGN', title: 'Outcome-Centric Solution',
+    id: 'design', num: '02', label: 'DATA READINESS', title: 'Data Readiness',
     gateStatus: 'amber', gateLabel: '⚠ GATE IN REVIEW', maxPhase: 3,
     gateChecks: [
       { s: 'green', text: 'AI rerouting scoped to MVP — 3 core rerouting heuristics' },
@@ -269,10 +269,7 @@ function SceneDiscover({ phase }) {
           ...fade(phase, 4, 200),
         }}>
           <div style={{ fontFamily: FD, fontSize: 13, color: C.white, fontStyle: 'italic', lineHeight: 1.55 }}>
-            "Dynamic rerouting recovers 73% of at-risk parcels within SLA windows"
-          </div>
-          <div style={{ fontFamily: FB, fontSize: 11, color: C.greenGrey, marginTop: 6 }}>
-            Source: 18-month disruption analysis · Posten Bring Data Science
+            "Dynamic rerouting recovers 53% of at-risk parcels within SLA windows"
           </div>
         </div>
       </div>
@@ -284,7 +281,7 @@ function SceneDiscover({ phase }) {
 const DATA_DOMAINS = [
   {
     name: 'TMS', full: 'Transport Management System', type: 'Internal',
-    steward: 'Lars Hagen, Data Steward', count: '2.4M parcels',
+    steward: 'Kari Nordmann, Data Steward', count: '2.4M parcels',
     quality: 92, qualityLabel: 'Quality score: 92/100',
     color: C.sGreen, colorBg: C.sGreenBg,
     rows: [
@@ -296,13 +293,13 @@ const DATA_DOMAINS = [
   },
   {
     name: 'Route Optimizer', full: 'Internal Route Planning System', type: 'Internal',
-    steward: 'Ingrid Moe, Lead Engineer', count: '18,400 routes',
+    steward: 'Ola Normann, Lead Engineer', count: '18,400 routes',
     quality: 78, qualityLabel: 'Quality score: 78/100',
     color: C.sAmber, colorBg: C.sAmberBg,
     rows: [
-      { id: 'RTE-00441', route: 'Driver: Bjørn A · 14 stops', status: '⚠ Partial' },
-      { id: 'RTE-00442', route: 'Driver: Silje R · 22 stops', status: '⚠ Partial' },
-      { id: 'RTE-00443', route: 'Driver: Erik N · 9 stops',  status: '✓ Full' },
+      { id: 'RTE-00441', route: 'Driver: Kari N · 14 stops', status: '⚠ Partial' },
+      { id: 'RTE-00442', route: 'Driver: Ola N · 22 stops', status: '⚠ Partial' },
+      { id: 'RTE-00443', route: 'Driver: Kari O · 9 stops',  status: '✓ Full' },
     ],
     checks: ['✓ Route IDs linkable to TMS', '⚠ 2 fields need mapping', '⚠ API rate limit: 500 req/min'],
   },
@@ -1473,7 +1470,7 @@ function ctrlBtn(col, big = false) {
 // ─── LEFT PANEL TITLES ────────────────────────────────────────────────────────
 const LEFT_TITLES = [
   { label: 'DISCOVERY', title: 'Mapping the impact case' },
-  { label: 'DATA PLATFORM', title: 'Data domains & stewardship' },
+  { label: 'DATA READINESS', title: 'Data readiness' },
   { label: 'INTEGRATION CHECKS', title: 'Architecture readiness assessment' },
   { label: 'DEMO', title: 'AI rerouting engine in action' },
   { label: 'DEPLOYMENT', title: 'Adoption & organisational change' },
